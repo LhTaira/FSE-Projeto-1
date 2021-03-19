@@ -36,7 +36,8 @@ void programLoop(int ref)
         // internalTemperature++,;
         // printf("Reading internal\n");
         internalTemperature = readUart(0xc1);
-
+        // printf("TR: %f\n", referenceTemperature);
+        // printf("TI: %f\n", internalTemperature);
         sleep(1);
         // fanOn();
         // fanOff();

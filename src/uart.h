@@ -59,22 +59,15 @@ float readUart(unsigned char mode)
         
     }
 
-    usleep(50);
+    sleep(1);
 
     if (uart0_filestream != -1)
     {
         unsigned char rx_buffer[256];
         int rx_length = read(uart0_filestream, (void*)rx_buffer, 255);  
-        unsigned char * floatarray = &rx_buffer[3];
-
-        float the_int;
-        memcpy(&the_int,floatarray,sizeof(float));
-        the_int = ntohl(the_int);
-        fonk = the_int;
+        
+        memcpy(&fonk,&rx_buffer[3],4);
         // printf("fonk %f\n", fonk);
-                    // //Bytes received
-        // rx_buffer[rx_length] = '\0';
-        // printf("%i Bytes lidos : %s\n", rx_length, rx_buffer);
         
     }
 
@@ -82,3 +75,4 @@ float readUart(unsigned char mode)
 
     return fonk;
 }
+
