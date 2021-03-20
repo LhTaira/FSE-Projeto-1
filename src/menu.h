@@ -212,7 +212,7 @@ void doMenu()
     }
 
   } while (choice != 3);
-  pthread_kill(controllerThread, 9);
+  ,(controllerThread, 9);
   refresh();
   clear();
   clrtoeol();

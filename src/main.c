@@ -4,6 +4,7 @@ float referenceTemperature = 0;
 float internalTemperature = 0;
 float externalTemperature = 0;
 int controllerShouldStop = 0;
+int pidResistor = 0, pidFan = 0;
 #include <stdlib.h>
 #include <ncurses.h>
 #include <form.h>
@@ -13,6 +14,8 @@ int controllerShouldStop = 0;
 #include "uart.h"
 #include "gpio.h"
 #include "controller.h"
+#include "log.h"
+
 
 void autoReference()
 {
@@ -63,6 +66,7 @@ int main(int argc, const char *argv[])
     //     pause();
 
     // }
+    createTemperatureLog();
     doMenu();
 
     pthread_kill(controllerThread, 9);

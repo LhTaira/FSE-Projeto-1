@@ -28,14 +28,18 @@ void programLoop(int ref)
         pid = getPid(internalTemperature, referenceTemperature);
 
         if(pid <= -40) {
-            resistor(0);
-            fan(pid*-1);
+            pidResistor = 0;
+            resistor(pidResistor);
+            pidFan = pid*-1;
+            fan(pidFan);
         } else if(pid > 0) {
-            fan(0);
-            resistor(pid);
+            pidFan = 0;
+            fan(pidFan);
+            pidResistor = pid;
+            resistor(pidResistor);
         }
 
-
+        logTemperatures()
 
         sleep(1);
     }
