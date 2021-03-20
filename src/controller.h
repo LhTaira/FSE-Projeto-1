@@ -3,16 +3,14 @@ float getAutoReference()
     return readUart(0xc2);
 }
 
-float getpotentiometerReference()
-{
-}
-
-float geterminalReference()
-{
+int getPid(float internalTemperature, float referenceTemperature) {
+    float error = referenceTemperature - internalTemperature;
+    return (int)((error*5) + (error*1) + (error*5));
 }
 
 void programLoop(int ref)
 {
+    int pid;
     
     while (controllerShouldStop != 1)
     {
@@ -20,26 +18,27 @@ void programLoop(int ref)
         switch (ref)
         {
         case 1:
-            // referenceTemperature++;
-            // printf("Reading auto\n");
             referenceTemperature = getAutoReference();
             break;
-
         case 2:
-            referenceTemperature = getpotentiometerReference();
-            break;
-
-        case 3:
-            referenceTemperature = geterminalReference();
             break;
         }
-        // internalTemperature++,;
-        // printf("Reading internal\n");
         internalTemperature = readUart(0xc1);
-        // printf("TR: %f\n", referenceTemperature);
-        // printf("TI: %f\n", internalTemperature);
+
+        pid = getPid(internalTemperature, referenceTemperature);
+
+        if(pid <= -40) {
+            resistor(0);
+            fan(pid*-1);
+        } else if(pid > 0) {
+            fan(0);
+            resistor(pid);
+        }
+
+
+
         sleep(1);
-        // fanOn();
-        // fanOff();
     }
+    fan(0);
+    fan(0);
 }
