@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+
 #include "../inc/global.h"
 
 void createTemperatureLog() {
@@ -25,6 +25,10 @@ void logTemperatures() {
     struct tm *dateTime;  
     time_t seconds;
     time(&seconds);
+    // if(seconds % 2 == 1)
+    // {
+    //     return;
+    // }
     FILE *log;
     dateTime = localtime(&seconds);
     log = fopen("log.csv", "a");

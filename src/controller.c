@@ -1,6 +1,7 @@
+#include <unistd.h>
+#include <time.h>
 #include "log.h"
 #include "global.h"
-#include <unistd.h>
 #include "../inc/controller.h"
 #include "../inc/gpio.h"
 #include "../inc/uart.h"
@@ -20,9 +21,9 @@ void getBme()
 {
     int teInt, pressureInt, humidityInt;
     bme280ReadValues(&teInt, &pressureInt, &humidityInt);
-    externalTemperature = ((float)teInt)/100.0;
-    pressure = pressureInt/100;
-    humidity = humidityInt/100;
+    externalTemperature = ((float)teInt) / 100.0;
+    pressure = pressureInt / 100;
+    humidity = humidityInt / 100;
 }
 
 int getPid(float internalTemperature, float referenceTemperature)
@@ -41,7 +42,7 @@ int getPid(float internalTemperature, float referenceTemperature)
 
     float delta = error - erro_anterior;
 
-    float pid = 5 * error + erro_total + 5 * delta;
+    float pid = 5 * error + erro_total + 35 * delta;
     if (pid > max)
     {
         pid = max;
@@ -57,9 +58,11 @@ int getPid(float internalTemperature, float referenceTemperature)
 void programLoop(int ref)
 {
     int pid;
+    time_t loopStart, loopEnd;
 
     while (controllerShouldStop != 1)
     {
+        time(&loopStart);
 
         switch (ref)
         {
@@ -92,7 +95,12 @@ void programLoop(int ref)
 
         logTemperatures();
 
-        sleep(1);
+        time(&loopEnd);
+        while (loopEnd == loopStart)
+        {
+            usleep(100);
+            time(&loopEnd);
+        }
     }
     resistor(0);
     fan(0);
