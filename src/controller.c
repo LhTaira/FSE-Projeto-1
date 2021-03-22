@@ -5,6 +5,7 @@
 #include "../inc/gpio.h"
 #include "../inc/uart.h"
 #include "../inc/bme280.h"
+#include "../inc/lcd.h"
 
 float erro_total = 0;
 float erro_anterior = 0;
@@ -19,7 +20,7 @@ void getBme()
 {
     int teInt, pressureInt, humidityInt;
     bme280ReadValues(&teInt, &pressureInt, &humidityInt);
-    externalTemperature = teInt/100;
+    externalTemperature = ((float)teInt)/100.0;
     pressure = pressureInt/100;
     humidity = humidityInt/100;
 }
@@ -70,6 +71,7 @@ void programLoop(int ref)
         }
         getBme();
         internalTemperature = readUart(0xc1);
+        writeLcd();
 
         pid = getPid(internalTemperature, referenceTemperature);
 
@@ -92,6 +94,6 @@ void programLoop(int ref)
 
         sleep(1);
     }
-    fan(0);
+    resistor(0);
     fan(0);
 }

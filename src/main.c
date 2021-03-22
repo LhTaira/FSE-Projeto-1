@@ -9,9 +9,9 @@
 #include <wiringPiI2C.h>
 #include <softPwm.h>
 
-
-#include "../inc/log.h" 
-#include "../inc/lcd.h" 
+#include "../inc/log.h"
+#include "../inc/lcdDriver.h"
+#include "../inc/lcd.h"
 #include "../inc/menu.h"
 #include "../inc/gpio.h"
 #include "../inc/uart.h"
@@ -31,7 +31,6 @@ int pidResistor = 0, pidFan = 0;
 void autoReference()
 {
     controllerShouldStop = 0;
-    // printf("starting loop\n");
     programLoop(1);
 }
 
@@ -46,10 +45,16 @@ void stop()
     controllerShouldStop = 1;
 }
 
+void finish()
+{
+    exit(0);
+}
+
 void *control()
 {
     signal(1, autoReference);
-    signal(2, terminalReference);
+    signal(2, finish);
+    signal(3, terminalReference);
     signal(4, stop);
     while (1)
     {
@@ -57,17 +62,19 @@ void *control()
     }
 }
 
-int main(int argc, const char *argv[])
-{   
-    bme280Init(1, 0x76);
-    if (wiringPiSetup() != 0)
-    {
-        exit(1);
-    }
-    fd = wiringPiI2CSetup(I2C_ADDR);
+void diePeacefully()
+{
+    clearLcd();
+    pthread_kill(controllerThread, 2);
+    finish();
+}
 
-    lcdLoc(LINE1);
-    typeln("Olar");
+
+int main(int argc, const char *argv[])
+{
+    bme280Init(1, 0x76);
+
+    wiringPiSetup();
 
     pinMode(4, OUTPUT);
     digitalWrite(4, LOW);
@@ -75,11 +82,20 @@ int main(int argc, const char *argv[])
     pinMode(5, OUTPUT);
     digitalWrite(5, LOW);
     softPwmCreate(5, 0, 100);
+
+    setupLcd();
+
     pthread_create(&controllerThread, NULL, &control, NULL);
+    signal(SIGINT, diePeacefully);
+
     createTemperatureLog();
+
     doMenu();
 
-    pthread_kill(controllerThread, 9);
+    // pthread_kill(controllerThread, 9);
+    clearLcd();
+    diePeacefully();
+
 
     return 0;
 }

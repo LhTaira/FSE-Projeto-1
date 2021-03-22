@@ -98,7 +98,7 @@ void screenForm()
   char fororonk[100];
   int k = 0;
   fororonk[k] = '\0';
-  pthread_kill(controllerThread, 2);
+  pthread_kill(controllerThread, 3);
   while (c != 27)
   {
     mvprintw(12, 20, fororonk);

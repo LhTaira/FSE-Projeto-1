@@ -35,8 +35,8 @@ float readUart(unsigned char mode)
     unsigned char *p_tx_buffer;
     short crc, incomingCrc;
     unsigned char rx_buffer[256];
-    // do
-    // {
+    do
+    {
 
         if (!configureUart() == 0)
         {
@@ -69,11 +69,11 @@ float readUart(unsigned char mode)
 
             memcpy(&fonk, &rx_buffer[3], 4);
             memcpy(&incomingCrc, &rx_buffer[7], 2);
-            // printf("fonk %f\n", fonk);
+            // printf("fonk %d\n", sizeof(rx_buffer));
         }
 
         close(uart0_filestream);
-    // } while (calcula_CRC(rx_buffer, 9) != incomingCrc);
+    } while (calcula_CRC(&rx_buffer[0], 7) != incomingCrc);
     // printf("Dang %d, %d\n", calcula_CRC(&rx_buffer[0], 9),  incomingCrc);
 
     return fonk;
