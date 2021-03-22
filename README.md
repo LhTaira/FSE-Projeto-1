@@ -11,9 +11,11 @@ https://gitlab.com/fse_fga/projetos_2020_2/projeto-1-2020.2
 Na pasta raiz do projeto
 
 * Para compilar rode o comando:
+
 `make`
 <br>
 * Para executar rode o comando:
+
 `make run`
 
 ### Usando o programa
