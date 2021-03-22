@@ -2,26 +2,34 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <form.h>
+#include "../inc/global.h"
+#include "../inc/menu.h"
 #define WIDTH 30
 #define HEIGHT 10
-
 
 int startx = 0;
 int starty = 0;
 int choice = 0;
 WINDOW *menu_win;
 
-void refreshReferenceTemperature(char * fororonk) {
-  referenceTemperature = (float) atof(fororonk);
-}
-
 char *choices[] = {
     "Usar TR por potenciometro",
     "Usar TR por terminal",
     "Sair",
 };
+
 int n_choices = sizeof(choices) / sizeof(char *);
+
+void refreshReferenceTemperature(char *fororonk)
+{
+  referenceTemperature = (float)atof(fororonk);
+  if (referenceTemperature < externalTemperature)
+  {
+    referenceTemperature = externalTemperature;
+  }
+}
 
 void print_menu(WINDOW *menu_win, int highlight)
 {
@@ -45,7 +53,7 @@ void print_menu(WINDOW *menu_win, int highlight)
   wrefresh(menu_win);
 }
 
-int screen2()
+void screen2()
 {
   int c = 0;
   pthread_kill(controllerThread, choice);
@@ -65,11 +73,10 @@ int screen2()
   pthread_kill(controllerThread, 4);
 }
 
-int screenForm()
+void screenForm()
 {
   FIELD *field[2];
   FORM *my_form;
-  int ch;
   int c = 0;
 
   clear();
@@ -88,7 +95,6 @@ int screenForm()
   post_form(my_form);
   mvprintw(8, 10, "Temperatura referencia:");
 
-
   char fororonk[100];
   int k = 0;
   fororonk[k] = '\0';
@@ -100,7 +106,6 @@ int screenForm()
     mvprintw(4, 0, "TI: %f", internalTemperature);
     mvprintw(5, 0, "TR: %f", referenceTemperature);
     mvprintw(6, 0, "TE: %f", externalTemperature);
-
 
     switch (c)
     {
@@ -114,10 +119,10 @@ int screenForm()
       break;
     case 10:
       refreshReferenceTemperature(fororonk);
-      k=0;
+      k = 0;
       fororonk[k] = '\0';
       mvprintw(2, 0, "asdasd %f", referenceTemperature);
-      form_driver (my_form, REQ_CLR_FIELD);
+      form_driver(my_form, REQ_CLR_FIELD);
       refresh();
       break;
     default:
@@ -212,7 +217,7 @@ void doMenu()
     }
 
   } while (choice != 3);
-  ,(controllerThread, 9);
+  pthread_kill(controllerThread, 9);
   refresh();
   clear();
   clrtoeol();

@@ -1,3 +1,5 @@
+#include "../inc/crc.h"
+
 short CRC16(short crc, char data)
 {
     const short tbl[256] = {
