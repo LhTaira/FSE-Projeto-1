@@ -101,7 +101,6 @@ void screenForm()
   pthread_kill(controllerThread, 3);
   while (c != 27)
   {
-    mvprintw(12, 20, fororonk);
     c = wgetch(menu_win);
     mvprintw(4, 0, "TI: %f", internalTemperature);
     mvprintw(5, 0, "TR: %f", referenceTemperature);
@@ -121,7 +120,6 @@ void screenForm()
       refreshReferenceTemperature(fororonk);
       k = 0;
       fororonk[k] = '\0';
-      mvprintw(2, 0, "asdasd %f", referenceTemperature);
       form_driver(my_form, REQ_CLR_FIELD);
       refresh();
       break;
@@ -138,9 +136,6 @@ void screenForm()
   pthread_kill(controllerThread, 4);
   cbreak();
 
-  refresh();
-
-  mvprintw(0, 0, fororonk);
   refresh();
   sleep(1);
   unpost_form(my_form);
